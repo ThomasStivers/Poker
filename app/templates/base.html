@@ -1,0 +1,38 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}
+{% if title %} {{ title }} - Accessible Video Poker {% else %} Accessible Video Poker {% endif %}
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-default">
+<ul class="nav nav-pills pull-right">
+<li role="presentation"><a href="{{ url_for('index') }}">Home</a></li>
+<li role="presentation"><a href="{{ url_for('bet') }}">Bet</a></li>
+<li role="presentation"><a href="{{ url_for('play') }}">Play</a></li>
+{% if current_user.is_authenticated %}
+<li role="presentation"><a href="{{ url_for('signout') }}">Sign Out</a></li></ul>
+{% else %}
+<li role="presentation"><a href="{{ url_for('signin') }}">Sign In</a></li>
+{% endif %}
+</ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-info" role="alert">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+{% block app_content %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}

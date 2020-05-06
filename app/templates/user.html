@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block app_content %}
+<h1>{{ user.username }}'s Profile</h1>
+<p>{{ user.username }} joined {{ moment(user.joined).fromNow() }}</p>
+<table>
+<caption>Statistics</caption>
+<tr><th>Points</th><td>{{ user.points }}</td></tr>
+<tr><th>Wins</th><td>{{ user.wins }}</td></tr>
+<tr><th>Losses</th><td>{{ user.losses }}</td></tr>
+</table>
+{% endblock %}

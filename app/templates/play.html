@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block app_content %}
+<h1>{{ pay_table.name }} - Accessible Video Poker</h1>
+<table>
+{% for hand, payout in pay_table.items() %}
+{% if hand == "name" %}
+<caption>{{ payout }}</caption>
+{% else %}
+<tr>
+<th>{{ hand }}</th>
+<td>{{ payout }}</td>
+</tr>
+{% endif %}
+{% endfor %}
+</table>
+<form action="" method="post" novalidate>
+{{ form.hidden_tag() }}
+<div class="jumbotron">
+<ul class="list-inline">
+{% for card in hand %}
+<li class="panel center-block">
+<div>HELD</div>
+<label class="card"><input type="checkbox"/>{{ card }}</label>
+</li>
+{% endfor %}
+</ul>
+</div>
+<p>{{ form.draw() }}</p>
+</form>
+{% endblock %}
