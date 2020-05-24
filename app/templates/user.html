@@ -4,7 +4,8 @@
 <p>{{ user.username }} joined {{ moment(user.joined).fromNow() }}</p>
 <table>
 <caption>Statistics</caption>
-<tr><th>Points</th><td>{{ user.points }}</td></tr>
+<tr><th>Points</th><td>{{ "{:,.0f}".format(user.points) }}</td></tr>
+<tr><th>Bet</th><td>{{ "${:,.2f}".format(user.bet) }}</td></tr>
 <tr><th>Wins</th><td>{{ user.wins }}</td></tr>
 <tr><th>Losses</th><td>{{ user.losses }}</td></tr>
 </table>

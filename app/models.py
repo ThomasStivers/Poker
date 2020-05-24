@@ -1,5 +1,9 @@
 from datetime import datetime
+from time import time
+
+from flask import current_app
 from flask_login import UserMixin
+import jwt
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db, login
 
@@ -16,8 +20,10 @@ class User(UserMixin, db.Model):
     status = db.Column(db.String(16))
     wins = db.Column(db.Integer, default=0)
     losses = db.Column(db.Integer, default=0)
-    points = db.Column(db.Integer, default=0)
+    points = db.Column(db.Float, default=0.0)
+    bet = db.Column(db.Float, default=0.0)
     balance = db.Column(db.Float, default=0.0)
+    hands = db.relationship("Hand", backref="player", lazy="dynamic")
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -27,3 +33,28 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {"reset_password": self.id, "exp": time() + expires_in},
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256"
+        ).decode("utf-8")
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])["reset_password"]
+        except:
+            return
+        return User.query.get(id)
+
+
+class Hand(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    hand = db.Column(db.String(15), index=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    user_id = db.Column("user_id", db.ForeignKey("user.id"))
+
+    def __repr__(self):
+        return f"<Hand {self.hand}>"

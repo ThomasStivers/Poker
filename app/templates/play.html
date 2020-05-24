@@ -1,30 +1,69 @@
-{% extends "base.html" %}
-{% block app_content %}
+{%- extends "base.html" -%}
+{%- import "bootstrap/wtf.html" as wtf -%}
+
+{%- block app_content -%}
 <h1>{{ pay_table.name }} - Accessible Video Poker</h1>
 <table>
-{% for hand, payout in pay_table.items() %}
-{% if hand == "name" %}
+{%- for hand, payout in pay_table.items() -%}
+{%- if hand == "name" -%}
 <caption>{{ payout }}</caption>
+{%- elif hand != None -%}
+{% if winning_hand and winning_hand == hand%}
+<tr class="success" role="alert">
+<th>
+{{ hand }}
+<span class="sr-text">Winner</span>
+</th>
+<td>{{ payout * session["bet_credits"] if "bet_credits" in session else 1 }}</td>
+</tr>
 {% else %}
 <tr>
 <th>{{ hand }}</th>
-<td>{{ payout }}</td>
+<td>{{ payout * session["bet_credits"] if "bet_credits" in session else 1 }}</td>
 </tr>
 {% endif %}
-{% endfor %}
+{%- endif -%}
+{%- endfor -%}
 </table>
+{#
+<div class="row">
+<div class="col-md4">
+{{ wtf.quick_form(bet_form) }}
+</div>
+</div>
+#}
 <form action="" method="post" novalidate>
 {{ form.hidden_tag() }}
-<div class="jumbotron">
-<ul class="list-inline">
-{% for card in hand %}
-<li class="panel center-block">
-<div>HELD</div>
-<label class="card"><input type="checkbox"/>{{ card }}</label>
-</li>
-{% endfor %}
-</ul>
+<div class="row no-gutters">
+{%- for file, card in hand.items() -%}
+<div class="card col-xs-2" id="{{ file }}">
+<div class="hold caption" role="alert"></div>
+<img class="img-responsive" role="img" src="{{ url_for("static", filename=file + ".svg") }}" alt="{{ card.string }}" tabindex="0"/>
 </div>
+{%- endfor -%}
+</div>
+<p>{{ current_user.balance }}</p>
 <p>{{ form.draw() }}</p>
 </form>
-{% endblock %}
+<p>{{ session }}</p>
+{%- endblock -%}
+
+{%- block scripts -%}
+{{ super() }}
+<script>
+$(document).ready(function() {
+$("img").first().focus()
+})
+$(".card").click(function() {
+var id = $(this).attr("id");
+var state = $(this).children(".hold");
+if (state.text() != "Held") {
+state.text("Held");
+$("<input type='hidden' id='hold-" + id + "' name='holds[]' value='" + id + "'/>").appendTo($("form"));
+} else {
+state.text("");
+$("#hold-" + id).remove();
+}
+})
+</script>
+{%- endblock -%}

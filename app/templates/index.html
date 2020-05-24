@@ -1,4 +1,10 @@
 {% extends "base.html" %}
 {% block app_content %}
 <h1>Accessible Video Poker</h1>
+<p>Welcome to Accessible Video Poker.
+<a href="{{ url_for('auth.signin') }}">Sign in</a>,
+<a href="{{ url_for('main.bet') }}">buy in (for free)</a>, and
+<a href="{{ url_for('main.play') }}">play video poker</a>!
+See how your strategy ranks against other players. Earn status which can be cashed in for bragging rights and not much more.</p>
+<p> If that sounds like fun then <a href="{{url_for('auth.register') }}">get registered and start playing</a>.</P>
 {% endblock %}

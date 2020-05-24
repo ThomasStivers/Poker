@@ -16,6 +16,8 @@ flask-bootstrap = "*"
 flask-moment = "*"
 flask-mail = "*"
 pyjwt = "*"
+flask-session = "*"
+email-validator = "*"
 
 [requires]
 python_version = "3.8"

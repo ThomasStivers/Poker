@@ -6,20 +6,22 @@
 {% block navbar %}
 <nav class="navbar navbar-default">
 <ul class="nav nav-pills pull-right">
-<li role="presentation"><a href="{{ url_for('index') }}">Home</a></li>
-<li role="presentation"><a href="{{ url_for('bet') }}">Bet</a></li>
-<li role="presentation"><a href="{{ url_for('play') }}">Play</a></li>
+<li role="presentation"><a href="{{ url_for('main.index') }}">Home</a></li>
+<li role="presentation"><a href="{{ url_for('main.bet') }}">Bet</a></li>
+<li role="presentation"><a href="{{ url_for('main.play') }}">Play</a></li>
 {% if current_user.is_authenticated %}
-<li role="presentation"><a href="{{ url_for('signout') }}">Sign Out</a></li></ul>
+<li role="presentation"><a href="{{ url_for('main.atm') }}">ATM</a></li></ul>
+<li role="presentation"><a href="{{ url_for('main.user', username=current_user.username) }}">{{ current_user.username }}</a></li></ul>
+<li role="presentation"><a href="{{ url_for('auth.signout') }}">Sign Out</a></li></ul>
 {% else %}
-<li role="presentation"><a href="{{ url_for('signin') }}">Sign In</a></li>
+<li role="presentation"><a href="{{ url_for('auth.signin') }}">Sign In</a></li>
 {% endif %}
 </ul>
 </nav>
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 {% for message in messages %}
