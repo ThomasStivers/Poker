@@ -2,48 +2,63 @@
 {%- import "bootstrap/wtf.html" as wtf -%}
 
 {%- block app_content -%}
-<h1>{{ pay_table.name }} - Accessible Video Poker</h1>
-<table>
-{%- for hand, payout in pay_table.items() -%}
-{%- if hand == "name" -%}
-<caption>{{ payout }}</caption>
-{%- elif hand != None -%}
-{% if winning_hand and winning_hand == hand%}
-<tr class="success" role="alert">
-<th>
-{{ hand }}
-<span class="sr-text">Winner</span>
-</th>
-<td>{{ payout * session["bet_credits"] if "bet_credits" in session else 1 }}</td>
-</tr>
-{% else %}
-<tr>
-<th>{{ hand }}</th>
-<td>{{ payout * session["bet_credits"] if "bet_credits" in session else 1 }}</td>
-</tr>
-{% endif %}
-{%- endif -%}
-{%- endfor -%}
-</table>
-{#
-<div class="row">
-<div class="col-md4">
-{{ wtf.quick_form(bet_form) }}
-</div>
-</div>
-#}
 <form action="" method="post" novalidate>
 {{ form.hidden_tag() }}
-<div class="row no-gutters">
-{%- for file, card in hand.items() -%}
-<div class="card col-xs-2" id="{{ file }}">
-<div class="hold caption" role="alert"></div>
-<img class="img-responsive" role="img" src="{{ url_for("static", filename=file + ".svg") }}" alt="{{ card.string }}" tabindex="0"/>
-</div>
-{%- endfor -%}
-</div>
-<p>{{ current_user.balance }}</p>
-<p>{{ form.draw() }}</p>
+<h1>
+{% if hand == None: %}
+{{ form.select_table }}
+{% else: %}
+{{ selected_table }}
+{% endif %}
+ - Accessible Video Poker</h1>
+<table>
+{% set pay_table = pay_tables[selected_table] %}
+    {%- for hand, payout in pay_table.items() -%}
+    {%- if hand == "name" -%}
+    <caption>{{ payout }}</caption>
+    {%- elif hand != None -%}
+    {% if winning_hand and winning_hand == hand%}
+    <tr class="alert-success" role="alert">
+        <th>
+            {{ hand }}
+            <span class="sr-only"> Winner</span>
+        </th>
+        <td>{{ "${:,.0f}".format(payout * session["bet_credits"] * session["credit"] if "bet_credits" in session else 1) }}</td>
+    </tr>
+    {% else %}
+    <tr class="alert-info">
+        <th>{{ hand }}</th>
+        <td>{{ "${:,.0f}".format(payout * session["bet_credits"] * session["credit"] if "bet_credits" in session else 1) }}</td>
+    </tr>
+    {% endif %}
+    {%- endif -%}
+    {%- endfor -%}
+</table>
+<div class="card-hand row no-gutters">
+{% if hand == None: %}
+{% for i in range(5): %}
+<div class="card col-xs-2">
+<div class="hold card-img-overlay" role="alert"></div>
+<img class="card-img img-responsive" role="img" src="{{ url_for("static", filename="2B.svg") }}"
+alt="Back of card" tabindex="0" />
+</div>       
+{% endfor %}
+{% else: %}
+{%- for file, card in hand.items(): -%}
+        <div class="card col-xs-2" id="{{ file }}">
+            <div class="hold card-img-overlay" role="alert"></div>
+            <img class="card-img img-responsive" id="img-card-{{ file }}" role="img" src="{{ url_for("static", filename=file + ".svg") }}"
+                alt="{{ card.string }}" tabindex="0" />
+        </div>
+        {%- endfor -%}
+        {% endif %}
+    </div>
+    <div class="alert alert-info">
+        {{ "${:,.2f}".format(current_user.balance) }}
+    </div>
+    <div>
+        {{ form.draw(class="btn btn-primary") }}
+    </div>
 </form>
 <p>{{ session }}</p>
 {%- endblock -%}
@@ -51,19 +66,22 @@
 {%- block scripts -%}
 {{ super() }}
 <script>
-$(document).ready(function() {
-$("img").first().focus()
-})
-$(".card").click(function() {
-var id = $(this).attr("id");
-var state = $(this).children(".hold");
-if (state.text() != "Held") {
-state.text("Held");
-$("<input type='hidden' id='hold-" + id + "' name='holds[]' value='" + id + "'/>").appendTo($("form"));
-} else {
-state.text("");
-$("#hold-" + id).remove();
-}
-})
+    $(document).ready(function() {
+        $("img").first().focus()
+    })
+    $(".card").click(function () {
+        let id = $(this).attr("id");
+        let state = $(this).children(".hold");
+        if (state.text() != "Held") {
+            state.text("Held");
+            $("<input type='hidden' id='hold-" + id + "' name='holds[]' value='" + id + "'/>").appendTo($("form"));
+        } else {
+            state.text("");
+            $("#hold-" + id).remove();
+        }
+        // `$(".select_table").addEventListener("blur", function() {
+            // $("form").submit()
+        // })
+    })
 </script>
 {%- endblock -%}

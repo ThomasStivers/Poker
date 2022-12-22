@@ -2,10 +2,21 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField, DecimalField, PasswordField, StringField, SubmitField, SelectField, HiddenField
 from wtforms.fields.html5 import IntegerField
 from wtforms.validators import InputRequired, NumberRange
+from app.poker import pay_tables
+
+
+class ResetUserDataForm(FlaskForm):
+    balance = BooleanField("Balance")
+    points = BooleanField("Points")
+    bet = BooleanField("Bet")
+    wins = BooleanField("Wins")
+    losses = BooleanField("Losses")
+    reset = SubmitField("Clear")
 
 class HoldCardsForm(FlaskForm):
     holds = HiddenField("holds[]")
-    draw = SubmitField("Deal", render_kw={"accesskey": "d"})
+    select_table = SelectField("Pay Table", choices=pay_tables.keys(),)
+    draw = SubmitField("Deal")
 
 class PlaceBetForm(FlaskForm):
     credit_choices = [
@@ -19,7 +30,7 @@ class PlaceBetForm(FlaskForm):
         (25, "$25"),
         (100, "$100"),
     ]
-    buy_in = DecimalField("Buy in")
+    buy_in = DecimalField("Buy in", default=0)
     bet_credits = IntegerField("Credits to bet", validators=[InputRequired(), NumberRange(min=1, max=5)])
     credit = SelectField("Credit value", choices=credit_choices, coerce=float, default=0.25, validators=[InputRequired()])
     bet = SubmitField("Bet")

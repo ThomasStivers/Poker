@@ -2,11 +2,58 @@
 {% block app_content %}
 <h1>{{ user.username }}'s Profile</h1>
 <p>{{ user.username }} joined {{ moment(user.joined).fromNow() }}</p>
-<table>
-<caption>Statistics</caption>
-<tr><th>Points</th><td>{{ "{:,.0f}".format(user.points) }}</td></tr>
-<tr><th>Bet</th><td>{{ "${:,.2f}".format(user.bet) }}</td></tr>
-<tr><th>Wins</th><td>{{ user.wins }}</td></tr>
-<tr><th>Losses</th><td>{{ user.losses }}</td></tr>
-</table>
+<form method="post" action="{{ url_for("main.user", username=user.username) }}">
+    {{ form.csrf_token }}
+    <table>
+        <caption>Statistics</caption>
+        <tr class="form-group">
+            <th>
+                {{ form.balance(class="form-check-input") }}
+                {{ form.balance.label(class="form-check-label") }}
+            </th>
+            <td>
+                {{ "${:,.0f}".format(user.balance) }}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                {{ form.points(class="form-check-input") }}
+                {{ form.points.label(class="form-check-label") }}
+            </th>
+            <td>
+                {{ "{:,.0f}".format(user.points) }}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                {{ form.bet(class="form-check-input") }}
+                {{ form.bet.label(class="form-check-label") }}
+            </th>
+            <td>
+                {{ "${:,.2f}".format(user.bet) }}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                {{ form.wins(class="form-check-input") }}
+                {{ form.wins.label(class="form-check-label") }}
+            </th>
+            <td>
+                {{ user.wins }}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                {{ form.losses(class="form-check-input") }}
+                {{ form.losses.label(class="form-check-label") }}
+            </th>
+            <td>
+                {{ user.losses }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">{{ form.reset(class="btn btn-primary") }}</td>
+        </tr>
+    </table>
+</form>
 {% endblock %}

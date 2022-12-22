@@ -9,7 +9,7 @@ Card = namedtuple("card", ["face", "suit", "string"])
 faces = "2 3 4 5 6 7 8 9 10 Jack Queen King Ace".split(" ")
 suits = "Clubs Diamonds Hearts Spades".split(" ")
 cards = [Card(face=c[0], suit=c[1], string=f"{c[0]} of {c[1]}") for c in product(faces, suits)]
-keys = [''.join(card) for card in list(product([f[0] if f != "10" else "T"for f in faces], [s[0] for s in suits]))]
+keys = [''.join(card) for card in list(product([f[0] if f != "10" else "T" for f in faces], [s[0] for s in suits]))]
 cards = dict(zip(keys, cards))
 
 pay_table = {
@@ -25,13 +25,46 @@ pay_table = {
     "Jacks or better.": 1,
     None: 0,
 }
+pay_tables = {
+    "Jacks or Better": {
+        "name": "Jacks or Better",
+        "Royal flush.": 800,
+        "straight flush.": 50,
+        "Four of a kind.": 25,
+        "Full house.": 9,
+        "Flush.": 6,
+        "Straight.": 4,
+        "Three of a kind.": 3,
+        "Two pair.": 2,
+        "Jacks or better.": 1,
+        None: 0,
+    },
+    "Bonus Poker": {
+        "name": "Bonus Poker",
+        "Royal flush.": 800,
+        "straight flush.": 50,
+        "4 aces.": 80,
+        "4 2-4.": 40,
+        "Four 5-K.": 25,
+        "Full house.": 8,
+        "Flush.": 5,
+        "Straight.": 4,
+        "Three of a kind.": 3,
+        "Two pair.": 2,
+        "Jacks or better.": 1,
+        None: 0,
+    },
+}
 
-def payout(hand, credit, bet_credits, user):
+
+def payout(hand, credit, bet_credits, user, pay_table="Bonus Poker"):
+    table = pay_tables[pay_table]
+    if pay_table == "Jacks or Better":
+        table["4 aces."], table["4 2-4"] = [table["four of a kind."]]*2
     try:
-        payout = pay_table[evaluate_hand(hand)] * credit * bet_credits
+        payout = table[evaluate_hand(hand)] * credit * bet_credits
     except KeyError:
         return 0
-    if payout <= 0: return 0
     user.balance += payout
     if payout > 0:
         user.wins += 1
@@ -56,7 +89,11 @@ def evaluate_hand(hand):
         return "Two pair."
     elif 2 in [counter["Jack"], counter["Queen"], counter["King"], counter["Ace"]]:
         return "Jacks or better."
-    if 4 in counter.values():
+    if counter["Ace"] == 4:
+        return "4 aces."
+    elif 4 in [counter["2"], counter["3"], counter["4"]]:
+        return "4 2-4"
+    elif 4 in counter.values():
         return "Four of a kind."
     straights = [["Ace", "2", "3", "4", "5"], ["2", "3", "4", "5", "6"], ["3", "4", "5", "6", "7"], ["4", "5", "6", "7", "8"], ["5", "6", "7", "8", "9"], ["6", "7", "8", "9", "10"], ["7", "8", "9", "10", "Jack"], ["8", "9", "10", "Jack", "Queen"], ["9", "10", "Jack", "Queen", "King"], ["10", "Jack", "Queen", "King", "Ace"]]
     if sorted([card.face for card in info]) in [sorted(straight) for straight in straights]:

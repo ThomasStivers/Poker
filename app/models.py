@@ -39,7 +39,7 @@ class User(UserMixin, db.Model):
             {"reset_password": self.id, "exp": time() + expires_in},
             current_app.config["SECRET_KEY"],
             algorithm="HS256"
-        ).decode("utf-8")
+        )
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -52,6 +52,7 @@ class User(UserMixin, db.Model):
 
 class Hand(db.Model):
     id = db.Column(db.Integer, primary_key = True)
+    dealt = db.Column(db.String(15), index=True)
     hand = db.Column(db.String(15), index=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column("user_id", db.ForeignKey("user.id"))
