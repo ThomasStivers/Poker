@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "poker"
+version = "0.1.0"
+description = "Accessible video poker simulater."
+authors = ["Thomas Stivers <thomas.stivers@gmail.com>"]
+license = "GPL"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Flask = "^2.2.2"
+Flask-Login = "^0.6.2"
+flask-sqlalchemy = "^3.0.2"
+Flask-WTF = "^1.0.1"
+python-dotenv = "^0.21.0"
+Flask-Bootstrap = "^3.3.7.1"
+Flask-Mail = "^0.9.1"
+Flask-Migrate = "^4.0.0"
+Flask-Moment = "^1.0.5"
+email-validator = "^1.3.0"
+Flask-Session = "^0.4.0"
+PyJWT = "^2.6.0"
+visitor = "^0.1.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+black = "^22.12.0"
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
