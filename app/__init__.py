@@ -79,9 +79,9 @@ def create_app(config_class=Config):
             )
         )
         file_handler.setLevel(logging.INFO)
-        app.logger.addHandler(file_handler)
-        app.logger.setLevel(logger.INFO)
-        app.logger.info("Poker startup")
+        app.logging.addHandler(file_handler)
+        app.logging.setLevel(logging.INFO)
+        app.logging.info("Poker startup")
 
     return app
 
