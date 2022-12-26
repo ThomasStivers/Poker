@@ -39,4 +39,4 @@ jobs:
     - name: Run Flask App
       run: |
         poetry run flask run
-      continue-on-error: trues
+      continue-on-error: true
