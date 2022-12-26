@@ -15,7 +15,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -36,6 +35,10 @@ jobs:
     - name: Test with pytest
       run: |
         poetry run pytest
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
     - name: Run Flask App
       run: |
         poetry run flask run
