@@ -31,13 +31,13 @@ pay_table = {
     "Three of a kind.": 3,
     "Two pair.": 2,
     "Jacks or better.": 1,
-    None: 0,
+    "Nothing.": 0,
 }
 pay_tables = {
     "Jacks or Better": {
         "name": "Jacks or Better",
         "Royal flush.": 800,
-        "straight flush.": 50,
+        "Straight flush.": 50,
         "Four of a kind.": 25,
         "Full house.": 9,
         "Flush.": 6,
@@ -45,14 +45,14 @@ pay_tables = {
         "Three of a kind.": 3,
         "Two pair.": 2,
         "Jacks or better.": 1,
-        None: 0,
+        "Nothing.": 0,
     },
     "Bonus Poker": {
         "name": "Bonus Poker",
         "Royal flush.": 800,
-        "straight flush.": 50,
-        "4 aces.": 80,
-        "4 2-4.": 40,
+        "Straight flush.": 50,
+        "Four aces.": 80,
+        "Four 2-4.": 40,
         "Four 5-K.": 25,
         "Full house.": 8,
         "Flush.": 5,
@@ -60,7 +60,7 @@ pay_tables = {
         "Three of a kind.": 3,
         "Two pair.": 2,
         "Jacks or better.": 1,
-        None: 0,
+        "Nothing.": 0,
     },
 }
 
@@ -68,11 +68,15 @@ pay_tables = {
 def payout(hand, credit, bet_credits, user, pay_table="Bonus Poker"):
     table = pay_tables[pay_table]
     if pay_table == "Jacks or Better":
-        table["4 aces."], table["4 2-4"] = [table["four of a kind."]] * 2
+        table["Four aces."], table["Four 2-4."], table["Four 5-K."] = [
+            table["Four of a kind."]
+        ] * 3
     try:
         payout = table[evaluate_hand(hand)] * credit * bet_credits
     except KeyError:
         return 0
+    if not user:
+        return payout
     user.balance += payout
     if payout > 0:
         user.wins += 1
@@ -83,7 +87,7 @@ def payout(hand, credit, bet_credits, user, pay_table="Bonus Poker"):
     return payout
 
 
-def evaluate_hand(hand):
+def evaluate_hand(hand, pay_table="Bonus Poker"):
     cards = globals()["cards"]
     counter = Counter()
     info = [cards[card] for card in hand]
@@ -98,10 +102,12 @@ def evaluate_hand(hand):
         return "Two pair."
     elif 2 in [counter["Jack"], counter["Queen"], counter["King"], counter["Ace"]]:
         return "Jacks or better."
-    if counter["Ace"] == 4:
-        return "4 aces."
-    elif 4 in [counter["2"], counter["3"], counter["4"]]:
-        return "4 2-4"
+    if pay_table == "Bonus Poker" and counter["Ace"] == 4:
+        return "Four aces."
+    elif pay_table == "Bonus Poker" and 4 in [counter["2"], counter["3"], counter["4"]]:
+        return "Four 2-4."
+    elif pay_table == "Bonus Poker" and 4 in counter.values():
+        return "Four 5-K."
     elif 4 in counter.values():
         return "Four of a kind."
     straights = [
@@ -128,6 +134,7 @@ def evaluate_hand(hand):
             return "Straight."
     if suit[1:] == [suit[0]] * 4:
         return "Flush."
+    return "Nothing."
 
 
 def draw_hand():

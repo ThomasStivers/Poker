@@ -35,12 +35,3 @@ jobs:
     - name: Test with pytest
       run: |
         poetry run pytest
-  execute:    
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
-    steps:
-    - name: Run Flask App
-      run: |
-        poetry run flask run
-      continue-on-error: true
