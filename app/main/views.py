@@ -24,7 +24,6 @@ def index():
 @bp.route("/atm", methods=["GET", "POST"])
 @login_required
 def atm():
-    # render_template("bet.html", form=PlaceBetForm())
     return redirect(url_for("main.bet"))
 
 

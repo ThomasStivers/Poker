@@ -47,24 +47,26 @@ def app():
     )
     with app.app_context():
         db.create_all()
-        yield app
-        db.drop_all()
+    return app
 
 
 @pytest.fixture(scope="module")
 def sample_user(app):
     user = User(
-        id=1000,
         username="sample_user",
         email="sample@user.test",
-        joined=datetime(2022, 1, 1),
-        wins=10,
-        losses=10,
-        points=1000,
-        bet=1,
-        balance=100,
+        password="SamplePassword",
     )
     with app.app_context():
         db.session.add(user)
         db.session.commit()
         yield user
+
+
+@pytest.fixture
+def logged_in(client, sample_user):
+    yield client.post(
+        "/auth/signin",
+        data={"username": sample_user.username, "password": "SamplePasswword"},
+        follow_redirects=True,
+    )

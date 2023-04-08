@@ -2,3 +2,4 @@ __pycache__/
 .vscode/
 poker.code-workspace
 .env
+.coverage

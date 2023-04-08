@@ -28,6 +28,16 @@ class User(UserMixin, db.Model):
     balance = db.Column(db.Float, default=0.0)
     hands = db.relationship("Hand", backref="player", lazy="dynamic")
 
+    def __init__(
+        self,
+        username: str,
+        email: str,
+        password: str,
+    ):
+        self.username = username
+        self.email = email
+        self.set_password(password)
+
     def __repr__(self):
         return f"<User {self.username}>"
 

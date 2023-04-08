@@ -1,15 +1,25 @@
 from app.models import User, Hand
 
 
+def test_new_user():
+    new_user = User(
+        username="new_user", email="new_user@example.com", password="SecretPassword"
+    )
+    assert new_user.email == "new_user@example.com"
+    assert new_user.password_hash != "SecretPassword"
+
+
 def test_user_repr(sample_user):
     assert "<User sample_user>" == repr(sample_user)
 
 
+def test_user_check_password(sample_user):
+    assert sample_user.check_password("SamplePassword")
+
+
 def test_user_set_password(sample_user):
-    sample_password = "Sample123!"
-    sample_user.set_password(sample_password)
-    assert sample_user.check_password(sample_password)
-    assert sample_user.password_hash != sample_password
+    sample_user.set_password("Sample123!")
+    assert sample_user.password_hash != "Sample123!"
 
 
 def test_user_get_reset_password_token(app, sample_user):
